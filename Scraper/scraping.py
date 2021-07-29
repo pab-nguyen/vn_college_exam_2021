@@ -30,8 +30,7 @@ driver = webdriver.Chrome(options=opts)
 driver.delete_all_cookies()
 
 ## for writing the first row of the csv using DictWriter
-monhoc = ['Toán', 'Ngữ văn', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'GDCD', 'KHTN', 'KHXH', 'Tiếng Anh', 'Tiếng Pháp', 'Tiếng Trung', 'Tiếng Nhật', 'Tiếng Đức','Tiếng Nga']
-full = ['SBD','Name','CMND','Toán', 'Ngữ văn', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'GDCD', 'KHTN', 'KHXH', 'Tiếng Anh', 'Tiếng Pháp', 'Tiếng Trung', 'Tiếng Nhật', 'Tiếng Đức','Tiếng Nga']
+full = ['SBD','Name','CMND','Toán', 'Ngữ văn', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'GDCD', 'KHTN', 'KHXH', 'Tiếng Anh', 'Tiếng Pháp', 'Tiếng Trung', 'Tiếng Nhật', 'Tiếng Đức','Tiếng Nga', 'Tiếng Hàn']
 
 
 
@@ -52,7 +51,7 @@ try:
         index=i
         sbd_dict = {}
 
-        driver.implicitly_wait(5)
+        driver.implicitly_wait(10)
         driver.get('http://diemthi.hcm.edu.vn/Home')
         input = driver.find_element_by_xpath('//input[@id="SoBaoDanh"]')
         input.send_keys(str(0)+str(i))
@@ -60,7 +59,6 @@ try:
         submit_btn.click()
 
         list=[]
-
         try:
             table = driver.find_element_by_xpath("//table")
             for r, row in enumerate(table.find_elements_by_xpath(".//tr")):
@@ -70,29 +68,32 @@ try:
         except:
             pass
 
-        sbd_dict["SBD"] = str(0)+str(i)
-        sbd_dict["Name"] = list[0][0]
-        sbd_dict["CMND"] = list[0][1]
+        try:
+            sbd_dict["SBD"] = str(0)+str(i)
+            sbd_dict["Name"] = list[0][0]
+            sbd_dict["CMND"] = list[0][1]
+        except:
+            pass
 
-        split_sq = list[0][2].split(':',1)
 
         try:
+            split_sq = list[0][2].split(':', 1)
             for x in range(1, 15):
-                sbd_dict[split_sq[0]] = split_sq[1][1:4]
-                split_sq = split_sq[1].split(':',1)
-                split_sq[0] = split_sq[0][6:]
+                s = split_sq[1].strip().split(' ',1)
+                sbd_dict[split_sq[0].strip()] = s[0]
+                split_sq = s[1].split(':',1)
         except:
-            print(split_sq)
             pass
 
         writer.writerow(sbd_dict)
-        time.sleep(2)
+        # time.sleep(5)
 
 
 
 except Exception as e:
     ## write the index so the script knows where where it left off
     print(e)
+    print(sbd_dict)
     open('index.txt', 'w').write('%d' % (index))
     csv_file.close()
     driver.quit()
