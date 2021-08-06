@@ -29,7 +29,7 @@ driver = webdriver.Chrome(options=opts)
 
 driver.delete_all_cookies()
 
-## for writing the first row of the csv using DictWriter
+## for writing the first row of the csv
 full = ['STT','Cụm Thi','Họ Tên','SBD','Ngày sinh','Giới tính','Toán (D1)', 'Ngữ văn (D2)', 'Vật lí (D3)', 'Hóa học (D4)', 'Sinh học (D5)', 'KHTN (D6)', 'Lịch sử (D7)','Địa lí (D8)', 'GDCD (D9)', 'KHXH (D10)', 'Ngoại ngữ (D11)','D12']
 
 
@@ -44,6 +44,8 @@ else:
     csv_file = open(f'score2021.csv', 'w', encoding='utf-8', newline='')
     writer = csv.writer(csv_file)
     writer.writerow(full)
+
+#variable to
 newindex=index
 driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2020/tra-cuu-diem-thi-thpt-quoc-gia.html')
 list= []
@@ -55,7 +57,7 @@ try:
             index2 = 1000001
         for y in range (index2,1999999):
             if count == 5:
-                raise Exception
+                break
             if x<10:
                 i = str(0) + str(x)+ str(y)[1:]
             else:
@@ -83,8 +85,8 @@ try:
                     for r, row in enumerate(table.find_elements_by_xpath(".//tr")):
                         list = [[td.text for td in row.find_elements_by_xpath(".//td")]]
                         time.sleep(.5)
-                    cnt+=1
                 except:
+                    cnt+=1
                     continue
 
             if list != check_dup_list:
