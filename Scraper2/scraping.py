@@ -57,15 +57,20 @@ driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2020/tra-cuu-diem-thi-thpt-
 list = []
 check_dup_list = []
 
-# if there's an error,
+# if there's an error, write current ID into index and index2, then show error
 try:
+    #iterate through 64 area codes
     for x in range(index, 64):
         count = 0
+        #if the area code changes, index2 starts again from 1000001
         if newindex != index:
             index2 = 1000001
+        #iterate through all candidate ID
         for y in range(index2, 1999999):
-            if count == 5:
+            #if there are 10 blank results in a row, move to next area code
+            if count == 10:
                 break
+            #concatentate the actual ID
             if x < 10:
                 i = str(0) + str(x) + str(y)[1:]
             else:
@@ -73,7 +78,7 @@ try:
             print(i)
             index = x
             index2 = y
-
+            #input in the candidate ID into input box on the website
             driver.implicitly_wait(6)
             input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
             input.clear()
@@ -81,6 +86,11 @@ try:
             input.send_keys(Keys.RETURN)
             time.sleep(1)
 
+            # create two variable, list and check_dup_list
+            # if list equals check_dup_list, keep finding the results table
+            # if it takes too long, move to the next candidate ID
+            # we are doing this because the results table might not change after we input new ID,
+            # for some reason, therefore we need to make sure it changes everytime we input in new ID
             cnt = 0
             while list == check_dup_list:
                 if cnt >= 5:
@@ -88,10 +98,12 @@ try:
                     writer.writerow(['', '', '', i])
                     break
                 try:
+                #while in the loop, find the results table which has the scores
                     table = driver.find_element_by_xpath("//tbody[@id='resultcontainer']")
                     for r, row in enumerate(table.find_elements_by_xpath(".//tr")):
                         list = [[td.text for td in row.find_elements_by_xpath(".//td")]]
-                        time.sleep(.5)
+                        time.sleep(1)
+                    cnt +=1
                 except:
                     cnt += 1
                     continue
