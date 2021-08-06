@@ -22,7 +22,7 @@ opts = Options()
 # user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
 opts.add_argument("--disable-notifications")
 opts.add_argument(f'user-agent={userAgent}')
-opts.add_argument("--headless")
+# opts.add_argument("--headless")
 
 #open driver
 driver = webdriver.Chrome(options=opts)
@@ -44,16 +44,18 @@ else:
     csv_file = open(f'score2021.csv', 'w', encoding='utf-8', newline='')
     writer = csv.writer(csv_file)
     writer.writerow(full)
-
+newindex=index
 driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2020/tra-cuu-diem-thi-thpt-quoc-gia.html')
 list= []
 check_dup_list=[]
 try:
     for x in range(index,64):
         count = 0
+        if newindex != index:
+            index2 = 1000001
         for y in range (index2,1999999):
             if count == 5:
-                break
+                raise Exception
             if x<10:
                 i = str(0) + str(x)+ str(y)[1:]
             else:
@@ -63,7 +65,7 @@ try:
             index2=y
             sbd_dict = {}
 
-            driver.implicitly_wait(10)
+            driver.implicitly_wait(6)
             input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
             input.clear()
             input.send_keys(i)
@@ -72,18 +74,18 @@ try:
 
             cnt = 0
             while list == check_dup_list:
+                if cnt >= 5:
+                    count += 1
+                    writer.writerow(['', '', '', i])
+                    break
                 try:
-                    if cnt == 5:
-                        count += 1
-                        writer.writerow(['', '', '', i])
-                        break
                     table = driver.find_element_by_xpath("//tbody[@id='resultcontainer']")
                     for r, row in enumerate(table.find_elements_by_xpath(".//tr")):
                         list = [[td.text for td in row.find_elements_by_xpath(".//td")]]
                         time.sleep(.5)
                     cnt+=1
                 except:
-                    pass
+                    continue
 
             if list != check_dup_list:
                 writer.writerow(list[0])
