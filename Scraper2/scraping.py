@@ -62,13 +62,14 @@ try:
     #iterate through 64 area codes
     for x in range(index, 64):
         count = 0
+        print(index)
         #if the area code changes, index2 starts again from 1000001
         if newindex != index:
             index2 = 1000001
         #iterate through all candidate ID
         for y in range(index2, 1999999):
-            #if there are 10 blank results in a row, move to next area code
-            if count == 10:
+            #if there are 15 blank results in a row, move to next area code
+            if count == 15:
                 break
             #concatentate the actual ID
             if x < 10:
