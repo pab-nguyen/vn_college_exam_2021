@@ -53,7 +53,7 @@ else:
 newindex = index
 
 # go to the website
-driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2021/tra-cuu-diem-thi-thpt-quoc-gia.html')
+driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2020/tra-cuu-diem-thi-thpt-quoc-gia.html')
 list = []
 check_dup_list = []
 
@@ -62,8 +62,9 @@ try:
     #iterate through 64 area codes
     for x in range(index, 64):
         count = 0
+        print(index)
         #if the area code changes, index2 starts again from 1000001
-        if newindex != x:
+        if newindex != index:
             index2 = 1000001
         #iterate through all candidate ID
         for y in range(index2, 1999999):
