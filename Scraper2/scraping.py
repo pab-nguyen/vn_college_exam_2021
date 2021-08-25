@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from fake_useragent import UserAgent
@@ -21,8 +22,9 @@ opts.add_argument(f'user-agent={userAgent}')
 
 # open driver
 driver = webdriver.Chrome(options=opts)
-
 driver.delete_all_cookies()
+
+
 
 # for writing the first row of the csv
 full = ['STT', 'Cụm Thi', 'Họ Tên', 'SBD', 'Ngày sinh', 'Giới tính', 'Toán (D1)', 'Ngữ văn (D2)', 'Vật lí (D3)',
@@ -60,7 +62,7 @@ check_dup_list = []
 # if there's an error, write current ID into index and index2, then show error
 try:
     #iterate through 64 area codes
-    for x in range(index, 64):
+    for x in range(index, 10):
         count = 0
         #if the area code changes, index2 starts again from 1000001
         if newindex != x:
@@ -68,7 +70,7 @@ try:
         #iterate through all candidate ID
         for y in range(index2, 1999999):
             #if there are 15 blank results in a row, move to next area code
-            if count == 15:
+            if count >= 15:
                 break
             #concatentate the actual ID
             if x < 10:
@@ -81,10 +83,16 @@ try:
             #input in the candidate ID into input box on the website
             driver.implicitly_wait(6)
             input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
-            input.clear()
-            input.send_keys(i)
-            input.send_keys(Keys.RETURN)
-            time.sleep(1)
+            try:
+                input.clear()
+                input.send_keys(i)
+                input.send_keys(Keys.RETURN)
+            except StaleElementReferenceException as Exception:
+                print(1)
+                input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
+                input.clear()
+                input.send_keys(i)
+                input.send_keys(Keys.RETURN)
 
             # create two variable, list and check_dup_list
             # if list equals check_dup_list, keep finding the results table
