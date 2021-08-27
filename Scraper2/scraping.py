@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from fake_useragent import UserAgent
@@ -53,18 +54,18 @@ else:
 newindex = index
 
 # go to the website
-driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2020/tra-cuu-diem-thi-thpt-quoc-gia.html')
+driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2021/tra-cuu-diem-thi-thpt-quoc-gia.html')
 list = []
 check_dup_list = []
 
 # if there's an error, write current ID into index and index2, then show error
 try:
     #iterate through 64 area codes
-    for x in range(index, 64):
+    for x in range(index, 10):
         count = 0
         print(index)
         #if the area code changes, index2 starts again from 1000001
-        if newindex != index:
+        if newindex != x:
             index2 = 1000001
         #iterate through all candidate ID
         for y in range(index2, 1999999):
@@ -81,11 +82,19 @@ try:
             index2 = y
             #input in the candidate ID into input box on the website
             driver.implicitly_wait(6)
-            input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
-            input.clear()
-            input.send_keys(i)
-            input.send_keys(Keys.RETURN)
-            time.sleep(1)
+
+            try:
+                input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
+                input.clear()
+                input.send_keys(i)
+                input.send_keys(Keys.RETURN)
+                time.sleep(1)
+            except StaleElementReferenceException as Exception:
+                input = driver.find_element_by_xpath('//input[@id="txtkeyword"]')
+                input.clear()
+                input.send_keys(i)
+                input.send_keys(Keys.RETURN)
+                time.sleep(1)
 
             # create two variable, list and check_dup_list
             # if list equals check_dup_list, keep finding the results table
