@@ -71,6 +71,8 @@ try:
         for y in range(index2, 1999999):
             #if there are 15 blank results in a row, move to next area code
             if count == 15:
+                driver.get('https://thanhnien.vn/giao-duc/tuyen-sinh/2021/tra-cuu-diem-thi-thpt-quoc-gia.html')
+            if count == 30:
                 break
             #concatentate the actual ID
             if x < 10:
@@ -125,7 +127,7 @@ try:
             check_dup_list = list
 
             # time.sleep(5)
-
+    driver.quit()
 
 
 except Exception as e:
